@@ -1,4 +1,6 @@
 spring:
+  webflux:
+    base-path: /
   profiles:
     active: local
   main:
