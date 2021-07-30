@@ -1,7 +1,11 @@
+import org.gradle.work.InputChanges
+
 plugins {
-    id 'org.springframework.boot' version '2.5.3'
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'java'
+  id 'org.springframework.boot' version '2.5.3'
+  id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+  id 'org.sonarqube' version '2.7'
+  id "com.github.node-gradle.node" version "3.1.0"
+  id 'java'
 }
 
 group = 'com.zevrant.services'
@@ -9,28 +13,94 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 repositories {
-    mavenCentral()
+  mavenCentral()
 }
 
 ext {
-    set('springCloudVersion', "2020.0.3")
+  set('springCloudVersion', "2020.0.3")
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
-    implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
+  implementation 'org.springframework.boot:spring-boot-starter-security'
+  implementation 'org.springframework.boot:spring-boot-starter-actuator'
+  implementation 'org.springframework.boot:spring-boot-starter-webflux'
+  implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
+  implementation 'io.micrometer:micrometer-registry-prometheus'
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  testImplementation 'org.springframework.security:spring-security-test'
 }
 
 dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-    }
+  imports {
+    mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+  }
+}
+
+node {
+  version = '14.15.4'
+  download = true
+  distBaseUrl = 'https://nodejs.org/dist'
+}
+
+npmInstall {
+  inputs.file 'package.json'
+  inputs.file 'package-lock.json'
+
+  outputs.cacheIf { true }
+
+  outputs.files fileTree('nodeModules')
+}
+
+npm_run_build {
+  // make sure the build task is executed only when appropriate files change
+  inputs.files fileTree('src/main/angular')
+
+  //
+  outputs.file "src/main/resources/static/index.html"
+  outputs.file "src/main/resources/static/main.js"
+  outputs.file "src/main/resources/static/polyfill.js"
+  outputs.file "src/main/resources/static/runtime.js"
+  outputs.file "src/main/resources/static/styles.css"
+
+}
+
+task moveFavIcon(type: Copy) {
+  from file("src/main/angular/favicon.ico")
+  into file("src/main/resources/static/")
 }
 
 test {
-    useJUnitPlatform()
+  useJUnitPlatform()
 }
+
+clean {
+  doFirst {
+    delete files("${rootDir}/build/resources/main/static/")
+  }
+}
+
+task npm_run_test(type: NpmTask) {
+  args = ['run', 'test']
+}
+
+//testSets {
+//    integrationTest { dirName = 'integrationTest' }
+//}
+
+//integrationTest {
+//    useJUnitPlatform()
+//}
+
+task npx_run_update(type: NpxTask) {
+  command = 'npm-check-updates'
+  args = ['-u']
+}
+
+tasks.compileJava.finalizedBy npm_run_build
+tasks.npm_run_build.dependsOn(tasks.npmInstall)
+tasks.npm_run_build.finalizedBy tasks.moveFavIcon
+tasks.bootJar.dependsOn(tasks.moveFavIcon)
+tasks.npx_run_update.finalizedBy(tasks.npmInstall)
+tasks.npx_run_update.finalizedBy(tasks.npm_run_build)
+//
+//tasks.test.finalizedBy tasks.npm_run_test
