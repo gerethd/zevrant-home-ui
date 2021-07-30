@@ -34,7 +34,7 @@
               "src/main/angular/assets"
             ],
             "styles": [
-              "src/main/angular/styles.scss"
+              "src/main/angular/mainstyles.scss"
             ],
             "scripts": []
           },

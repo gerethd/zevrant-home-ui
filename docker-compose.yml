@@ -1,0 +1,18 @@
+version: '3.5'
+services:
+  zevrant-home-ui:
+    ports:
+      - "7644:7644"
+    image: zevrant/zevrant-home-ui:${VERSION}
+    restart: unless-stopped
+    environment:
+      VERSION:
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
+      AWS_DEFAULT_REGION: 'us-east-1'
+      AWS_DEFAULT_OUTPUT: json
+networks:
+  default:
+    external:
+      name: zevrant-discovery-service_microservices
+

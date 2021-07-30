@@ -1,0 +1,39 @@
+table {
+  width: 80%;
+  margin-top: 7%;
+}
+
+td {
+  width: 5%;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  margin-top: 7%;
+  margin-bottom: fill;
+}
+
+.line-break {
+  flex-basis: 100%;
+  height: 0;
+}
+
+.push {
+  left: 25%;
+}
+
+button {
+  margin-left: 40%;
+}
+
+.big {
+  width: 20%;
+  margin-left: 2%;
+}

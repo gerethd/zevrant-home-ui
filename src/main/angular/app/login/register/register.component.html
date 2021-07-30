@@ -1,0 +1,75 @@
+<div [style.height]="'5%'" color="primary"></div>
+<mat-card class="center container mat-elevation-z8">
+    <h1>Enter Registration Info</h1>
+    <div class="line-break"></div>
+    <form (ngSubmit)="onSubmit()" [formGroup]="registerForm" color="primary">
+        <div *ngIf="username.invalid && (username.dirty || username.touched)"
+             class="alert alert-danger">
+
+            <div *ngIf="username.errors.required">
+                Username is required.
+            </div>
+            <div *ngIf="username.errors.minlength">
+                Username must be at least 4 characters long.
+            </div>
+            <div *ngIf="username.errors.regexValidator">
+                Username must consist of alphabetic characters.
+            </div>
+        </div>
+        <mat-form-field color="primary">
+            <input formControlName="username" id="username" matInput placeholder="username"/>
+        </mat-form-field>
+        <div class="line-break"></div>
+        <div *ngIf="password.invalid && (password.dirty || password.touched)"
+             class="alert alert-danger">
+
+            <div *ngIf="password.errors.required">
+                Password is required.
+            </div>
+            <div *ngIf="password.errors.minlength">
+                Password must be at least 11 characters long.
+            </div>
+            <div *ngIf="password.errors.regexValidator">
+                Password must consist of alphabetic characters upper and lower, numbers, and punctuation.
+            </div>
+        </div>
+        <mat-form-field color="primary">
+            <input formControlName="password" id="password" matInput placeholder="password" type='password'/>
+        </mat-form-field>
+        <div class="line-break"></div>
+        <mat-form-field color="primary">
+            <input formControlName="fullName" id="full-name" matInput placeholder="full name"/>
+        </mat-form-field>
+    </form>
+    <div class="big">
+        <mat-paginator
+                [length]="totalRows"
+                [pageIndex]="0"
+                [pageSizeOptions]="[4]"
+                [pageSize]="4"
+                [style.float]="'left'"
+        >
+            <button (click)="roleSearch(0,4)" mat-button>
+                <mat-icon>refresh</mat-icon>
+            </button>
+        </mat-paginator>
+        <div class="line-break"></div>
+        <table [dataSource]="userRoles" color="secondary" mat-table>
+            <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+            <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+            <ng-container matColumnDef="Desired Role">
+                <th *matHeaderCellDef mat-header-cell>Desired Role</th>
+                <td *matCellDef="let role" data-label="ID" mat-cell><span class="push">{{role.role}}</span></td>
+            </ng-container>
+            <ng-container matColumnDef="Is Applied">
+                <th *matHeaderCellDef mat-header-cell><span class="center">Is Applied</span></th>
+                <td *matCellDef="let role" data-label="ID" mat-cell>
+                    <mat-checkbox (change)="applyRole(role)" [checked]="containsRole(role)" class="checkbox center"
+                                  id="{{role.role}}"></mat-checkbox>
+                </td>
+            </ng-container>
+        </table>
+    </div>
+    <div class="line-break"></div>
+    <button (click)="onSubmit()" color="primary" mat-button type="submit">Submit</button>
+</mat-card>

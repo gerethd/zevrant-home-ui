@@ -1,0 +1,58 @@
+<mat-card>
+    <div *ngIf="isLoading | async" class="spinner">
+        <mat-spinner></mat-spinner>
+    </div>
+    <form [formGroup]="searchModelForm" color="primary">
+        <mat-form-field>
+            <input color="primary" formControlName="modelSearch" matInput placeholder="search models"/>
+        </mat-form-field>
+        <mat-form-field>
+            <input color="primary" formControlName="tagSearch" matInput placeholder="search tags"/>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Results Source</mat-label>
+            <mat-select color="primary" formControlName="source" placeholder="Zevrant Services">
+                <mat-option value="Zevrant Services">Zevrant Services</mat-option>
+                <mat-option (click)="paginatorSearch()" value="Thingiverse">Thingiverse</mat-option>
+                <mat-option (click)="paginatorSearch()" value="Cults">Cults</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <button (click)="paginatorSearch()" mat-button>
+            <mat-icon>search</mat-icon>
+        </button>
+        <mat-paginator
+                [length]="totalRows"
+                [pageIndex]="0"
+                [pageSizeOptions]="[5, 10, 25, 50, 100]"
+                [pageSize]="20">
+            <button (click)="paginatorSearch()" mat-button>
+                <mat-icon>refresh</mat-icon>
+            </button>
+        </mat-paginator>
+        <mat-accordion class="mat-table" displayMode="flat" multi>
+            <section class="mat-elevation-z2 mat-header-row" matSort>
+                <th class="mat-header-cell" mat-sort-header="Model">Model</th>
+                <th class="mat-header-cell" mat-sort-header="Tags">Tags</th>
+            </section>
+            <mat-expansion-panel (click)="getCoverPhoto(model)" *ngFor="let model of searchData">
+                <mat-expansion-panel-header class="mat-row">
+                    <span class="mat-cell">{{model.fileName}}</span>
+                    <span class="mat-cell">{{model.tags}}</span>
+                </mat-expansion-panel-header>
+                <mat-form-field>
+                    <input [(ngModel)]="model.tags" [formControlName]="model.fileName" color="primary"
+                           matInput placeholder="Update Tags tag1.tag2,tag3">
+                </mat-form-field>
+                <button (click)="updateTags(model)" color="accent" mat-button matTooltip="Add Tag">
+                    <mat-icon>library_add</mat-icon>
+                </button>
+                <a id="download"></a>
+                <button (click)="download(model)" color="accent" mat-button>
+                    <mat-icon>cloud_download</mat-icon>
+                </button>
+                <img [height]="400" [src]="model.coverPhoto" [width]="500" id="photo-id"/>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </form>
+</mat-card>
+

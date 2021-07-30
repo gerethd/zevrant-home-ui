@@ -1,0 +1,64 @@
+<mat-card>
+    <div *ngIf="isLoading | async" class="spinner">
+        <mat-spinner></mat-spinner>
+    </div>
+    <div class="center" id="modelInput">
+        <div class="center" id="tagsTable">
+            <form [formGroup]="searchTagForm" color="primary">
+                <mat-form-field color="primary">
+                    <input (keyup)="searchTag()" color="primary" formControlName="tagSearch" id="searchField" matInput
+                           placeholder="search tags">
+                </mat-form-field>
+                <button (click)="addTag()" color="accent" mat-button matTooltip="Add Tag">
+                    <mat-icon>library_add</mat-icon>
+                </button>
+                <br>
+                <table [dataSource]="tags | async" class="mat-elevation-z8" mat-table>
+                    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+                    <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+                    <ng-container matColumnDef="tag">
+                        <th *matHeaderCellDef mat-header-cell>Tag</th>
+                        <td *matCellDef="let tag" mat-cell>{{tag.tag}}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="checkbox">
+                        <th *matHeaderCellDef mat-header-cell>Apply Tags</th>
+                        <td *matCellDef="let tag" class="d-flex justify-content-center" mat-cell>
+                            <mat-checkbox (click)="applyTag(tag)" [checked]="tag.isApplied | async"
+                                          class="checkbox"></mat-checkbox>
+                        </td>
+                    </ng-container>
+                </table>
+            </form>
+
+        </div>
+        <div class="down">
+            <mat-label>Model:</mat-label>
+            <button (click)="fileInput.click()" color="accent" mat-button>
+                <mat-icon>library_add</mat-icon>
+                <input #fileInput (change)="fileUploadEvent($event)" id="fileUploadInput"
+                       style="display:none"
+                       type="file">
+            </button>
+            <div>
+                <mat-label *ngIf="filesTouched">File Name: {{files.name}}</mat-label>
+                <br>
+                <mat-label *ngIf="filesTouched">File Size: {{fileSize}} Mb</mat-label>
+            </div>
+
+        </div>
+        <div class="down">
+            <mat-label>Cover Photo:</mat-label>
+            <button (click)="coverPhoto.click()" color="accent" mat-button>
+                <mat-icon>library_add</mat-icon>
+                <input #coverPhoto (change)="fileCoverPhotoUploadEvent($event)"
+                       id="fileCoverPhotoUploadInput"
+                       style="display:none" type="file">
+            </button>
+            <div *ngIf="photo">
+                <img [height]="400" [src]="photo" [width]="500" id="photo-id"/>
+            </div>
+        </div>
+        <button (click)="submit()" class="right" color="primary" mat-button>Submit</button>
+    </div>
+</mat-card>
+

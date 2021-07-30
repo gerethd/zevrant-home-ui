@@ -1,0 +1,21 @@
+<mat-card color="primary">
+    <form (ngSubmit)="onSubmit()" [formGroup]="loginForm" color="primary">
+        <h1>Welcome! Please Log In</h1>
+        <mat-form-field color="primary">
+            <input formControlName="username" id="username" matInput placeholder="username"/>
+        </mat-form-field>
+        <br>
+        <mat-form-field color="primary">
+            <input formControlName="password" id="password" matInput placeholder="password" type='password'/>
+        </mat-form-field>
+        <br>
+        <mat-form-field color="primary">
+            <input formControlName="twoFactor" id="2fa" matInput placeholder="2FA Code" type='text'/>
+        </mat-form-field>
+        <br>
+        <button color="primary" id="loginSubmit" mat-button type="submit">Submit</button>
+    </form>
+    <span color="accent">Forgot password? Click </span><a color="secondary" routerLink="forgot-password">here</a><br>
+    <span color="accent">New User? Click </span><a color="secondary" id="register" routerLink="register">here</a>
+</mat-card>
+

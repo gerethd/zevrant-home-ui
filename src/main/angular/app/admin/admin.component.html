@@ -1,0 +1,48 @@
+<div class="big">
+    <mat-paginator
+            [length]="totalRows"
+            [pageIndex]="0"
+            [pageSizeOptions]="[4]"
+            [pageSize]="4"
+            [style.float]="'left'">
+        <button (click)="roleSearch(0,4)" mat-button>
+            <mat-icon>refresh</mat-icon>
+        </button>
+    </mat-paginator>
+    <br>
+    <table [dataSource]="users" color="secondary" mat-table>
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+        <ng-container matColumnDef="Username">
+            <th *matHeaderCellDef mat-header-cell>User</th>
+            <td *matCellDef="let user" data-label="user" mat-cell>{{user.username}}</td>
+        </ng-container>
+        <ng-container *ngFor="let role of userRoles" [matColumnDef]="role">
+            <th *matHeaderCellDef mat-header-cell>{{role}}</th>
+            <td *matCellDef="let user" data-label="role" id="{{user.username}}-{{role}}" mat-cell>
+                <mat-checkbox (change)="updateRole(user, role)"
+                              [checked]="containsRole(user, role) | async"></mat-checkbox>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="Delete User">
+            <th *matHeaderCellDef mat-header-cell>Delete User</th>
+            <td *matCellDef="let user" data-label="Delete User" mat-cell>
+                <button (click)="deleteUser()" mat-button>
+                    <mat-icon>delete</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+    </table>
+    <button (click)="save()" color="primary" id="save" mat-button>Save</button>
+</div>
+
+<form (ngSubmit)="onSubmit()" [formGroup]="addRolesForm" color="primary">
+    <mat-form-field color="primary">
+        <input formControlName="addRole" id="add-role" matInput placeholder="add role"/>
+    </mat-form-field>
+    <br>
+    <mat-form-field color="primary">
+        <textarea formControlName="roleDesc" id="roleDesc" matInput placeholder="role description here"></textarea>
+    </mat-form-field>
+    <button color="primary" mat-button type="submit">Submit</button>
+</form>
